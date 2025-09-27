@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>사칙연산 학습 (모바일 최적화)</title>
+  <title>기초수학</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
   <style>
@@ -24,33 +24,64 @@
       box-shadow:0 6px 20px rgba(0,0,0,.1);
       padding:16px;
     }
-    h1 { text-align:center; margin:0 0 8px; font-size:24px; }
-    .sub { text-align:center; margin:0 0 12px; font-size:15px; color:#555; }
-    .tabs, .levels {
-      display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-bottom:10px;
+    h1 { text-align:center; margin:0 0 16px; font-size:26px; }
+
+    /* 상단 모드 버튼 */
+    .tabs {
+      display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:12px;
     }
-    .tabs button, .levels button {
-      border:none; border-radius:999px; padding:10px 14px;
-      font-size:15px; background:#ff9a9e; color:#fff; cursor:pointer;
+    .tabs button {
+      border:none; border-radius:999px; padding:10px 16px;
+      font-size:16px; background:#ff9a9e; color:#fff; cursor:pointer;
+      transition:.2s;
     }
-    .tabs button.active, .levels button.active { background:#ff6a88; }
-    .card { border:2px solid #f1f5f9; border-radius:14px; padding:14px; margin-bottom:12px; }
-    .q { font-size:28px; text-align:center; margin:14px 0; min-height:40px; }
+    .tabs button.active, .tabs button:hover { background:#ff6a88; }
+
+    /* 난이도 버튼 */
+    .levels {
+      display:flex; gap:8px; justify-content:center; margin-bottom:16px;
+    }
+    .levels button {
+      border:2px solid #ff9a9e; border-radius:999px; padding:8px 14px;
+      font-size:15px; background:#fff; color:#ff6a88; cursor:pointer;
+      transition:.2s;
+    }
+    .levels button.active, .levels button:hover {
+      background:#ff9a9e; color:#fff;
+    }
+
+    .card {
+      border:2px solid #f1f5f9; border-radius:14px; padding:14px;
+    }
+    .q { font-size:30px; text-align:center; margin:14px 0; min-height:40px; }
     #vizGrid { text-align:center; margin:6px 0; }
     .viz-row { line-height:1.6; font-size:20px; }
+
     #answerDisplay {
       width:100%; text-align:center;
       font-size:28px; padding:12px; border:2px solid #ddd; border-radius:10px;
-      margin-bottom:8px; min-height:40px; background:#fafafa;
+      margin-bottom:12px; min-height:40px; background:#fafafa;
     }
+
+    /* 숫자 키패드 */
     .num-pad {
-      display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px;
+      display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:12px;
     }
     .num-pad button {
       font-size:22px; padding:16px; border:none; border-radius:12px;
       background:#e5e7eb; cursor:pointer;
+      transition:.2s;
     }
+    .num-pad button:active { background:#d1d5db; }
     .num-pad button.action { background:#475569; color:#fff; }
+
+    /* 하단 버튼 */
+    .btn {
+      border:none; border-radius:10px; padding:12px; font-size:16px;
+      cursor:pointer; background:#ff9a9e; color:#fff; width:100%;
+    }
+    .btn:hover { background:#ff6a88; }
+
     .result { text-align:center; font-size:18px; min-height:24px; margin:8px 0; }
     .ok { color:#1a9c50; }
     .ng { color:#d93025; }
@@ -59,6 +90,7 @@
       padding:8px 10px; border-radius:10px; font-size:15px; display:none;
     }
     .hint strong { color:#b45309; }
+
     #btnShowAnswer {
       display:none; width:100%; padding:10px; margin-top:8px;
       font-size:16px; border:none; border-radius:10px;
@@ -68,8 +100,7 @@
 </head>
 <body>
   <div class="app">
-    <h1>사칙연산 연습</h1>
-    <p class="sub">아이패드/아이폰 세로 모드에 최적화</p>
+    <h1>기초수학</h1>
 
     <div class="tabs">
       <button onclick="setMode('add')">덧셈</button>
@@ -102,7 +133,7 @@
         <button onclick="pressNum(0)">0</button>
         <button onclick="checkAnswer()" class="action">확인</button>
       </div>
-      <button class="btn secondary" style="width:100%" onclick="newQuestion()">다음 문제</button>
+      <button class="btn" onclick="newQuestion()">다음 문제</button>
       <div id="result" class="result"></div>
       <div id="hint" class="hint"></div>
       <button id="btnShowAnswer">정답 보기</button>
