@@ -2,153 +2,207 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>구구단 연습 & 게임 (사과 시각화)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>사칙연산 학습 (모바일 최적화)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --bg-1:#a8edea; --bg-2:#fed6e3;
-      --primary:#ff9a9e; --primary-hover:#ff6a88;
-      --ok:#1a9c50; --ng:#d93025; --ink:#333;
-      --card:#ffffff; --muted:#6b7280; --border:#e5e7eb;
-    }
-    body{
+    body {
       font-family:'Jua', sans-serif;
-      margin:0; background:linear-gradient(to bottom,var(--bg-1),var(--bg-2));
-      min-height:100vh; display:flex; align-items:center; justify-content:center;
-      padding:24px;
+      margin:0;
+      background:linear-gradient(to bottom,#a8edea,#fed6e3);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:12px;
     }
-    .app{width:min(980px,100%); background:var(--card); border-radius:24px;
-      box-shadow:0 10px 30px rgba(0,0,0,.08); padding:24px;}
-    h1{text-align:center; margin:0 0 8px; color:var(--ink);}
-    .sub{text-align:center; color:var(--muted); margin:0 0 20px;}
-    .tabs{display:flex; gap:12px; justify-content:center; margin-bottom:16px}
-    .tabs button{border:none; border-radius:999px; padding:12px 22px; font-size:18px;
-      background:var(--primary); color:#fff; cursor:pointer; transition:.2s;}
-    .tabs button:hover{background:var(--primary-hover)}
-    .panel{display:none}
-    .panel.active{display:block}
-    .card{background:#fff; border:2px solid #f1f5f9; border-radius:18px; padding:18px; margin-bottom:12px;}
-    .q{font-size:46px; text-align:center; margin:16px 0}
-    .inputs{display:flex; gap:8px; justify-content:center; flex-wrap:wrap}
-    input[type="number"]{width:160px; font-size:22px; padding:10px; border-radius:12px; border:2px solid #e2e8f0;}
-    .btn{border:none; border-radius:12px; padding:10px 16px; font-size:18px; cursor:pointer; background:#111827; color:#fff;}
-    .btn.secondary{background:#475569}
-    .result{text-align:center; font-size:20px; margin-top:10px; min-height:30px}
-    .ok{color:var(--ok)} .ng{color:var(--ng)}
-    .hint{margin-top:10px; background:#fff7ed; border:1px solid #fed7aa; color:#7c2d12;
-      padding:10px 12px; border-radius:12px; text-align:left; font-size:18px; display:none}
-    .hint strong{color:#b45309}
-    .viz-grid{padding:12px; border:2px dashed #e2e8f0; border-radius:14px; background:#fafafa;}
-    .viz-row{white-space:nowrap; line-height:1.8}
-    .scorebar{display:flex; gap:12px; justify-content:center; margin-top:8px; flex-wrap:wrap; color:#0b5cab}
-    .badge{background:#eef2ff; color:#3730a3; padding:6px 10px; border-radius:999px; border:1px solid #c7d2fe}
+    .app {
+      width:100%;
+      max-width:480px;
+      background:#fff;
+      border-radius:20px;
+      box-shadow:0 6px 20px rgba(0,0,0,.1);
+      padding:16px;
+    }
+    h1 { text-align:center; margin:0 0 8px; font-size:24px; }
+    .sub { text-align:center; margin:0 0 12px; font-size:15px; color:#555; }
+    .tabs, .levels {
+      display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-bottom:10px;
+    }
+    .tabs button, .levels button {
+      border:none; border-radius:999px; padding:10px 14px;
+      font-size:15px; background:#ff9a9e; color:#fff; cursor:pointer;
+    }
+    .tabs button.active, .levels button.active { background:#ff6a88; }
+    .card { border:2px solid #f1f5f9; border-radius:14px; padding:14px; margin-bottom:12px; }
+    .q { font-size:28px; text-align:center; margin:14px 0; min-height:40px; }
+    #vizGrid { text-align:center; margin:6px 0; }
+    .viz-row { line-height:1.6; font-size:20px; }
+    #answerDisplay {
+      width:100%; text-align:center;
+      font-size:28px; padding:12px; border:2px solid #ddd; border-radius:10px;
+      margin-bottom:8px; min-height:40px; background:#fafafa;
+    }
+    .num-pad {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px;
+    }
+    .num-pad button {
+      font-size:22px; padding:16px; border:none; border-radius:12px;
+      background:#e5e7eb; cursor:pointer;
+    }
+    .num-pad button.action { background:#475569; color:#fff; }
+    .result { text-align:center; font-size:18px; min-height:24px; margin:8px 0; }
+    .ok { color:#1a9c50; }
+    .ng { color:#d93025; }
+    .hint {
+      margin-top:8px; background:#fff7ed; border:1px solid #fed7aa; color:#7c2d12;
+      padding:8px 10px; border-radius:10px; font-size:15px; display:none;
+    }
+    .hint strong { color:#b45309; }
+    #btnShowAnswer {
+      display:none; width:100%; padding:10px; margin-top:8px;
+      font-size:16px; border:none; border-radius:10px;
+      background:#475569; color:#fff; cursor:pointer;
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <h1>구구단 연습 & 게임</h1>
-    <p class="sub">사과 그림으로 곱셈을 쉽게 이해해요!</p>
+    <h1>사칙연산 연습</h1>
+    <p class="sub">아이패드/아이폰 세로 모드에 최적화</p>
 
     <div class="tabs">
-      <button id="tabPractice">연습 모드</button>
-      <button id="tabGame">게임 모드</button>
+      <button onclick="setMode('add')">덧셈</button>
+      <button onclick="setMode('sub')">뺄셈</button>
+      <button onclick="setMode('mul')">곱셈</button>
+      <button onclick="setMode('mix')">전체</button>
     </div>
 
-    <!-- 연습 모드 -->
-    <div id="panelPractice" class="panel active">
-      <div class="card">
-        <div class="q" id="qPractice">문제를 시작해보세요</div>
-        <div id="vizGrid" class="viz-grid"></div>
-        <div class="inputs">
-          <input type="number" id="ansPractice" placeholder="답 입력" />
-          <button class="btn" id="btnCheckPractice">확인</button>
-          <button class="btn secondary" id="btnNextPractice">다음 문제</button>
-        </div>
-        <div id="resPractice" class="result"></div>
-        <div id="hintPractice" class="hint"></div>
-        <button id="btnShowAnswer" class="btn secondary" style="display:none">정답 보기</button>
-      </div>
+    <div class="levels">
+      <button onclick="setLevel('easy')">쉬움</button>
+      <button onclick="setLevel('normal')">보통</button>
+      <button onclick="setLevel('hard')">어려움</button>
     </div>
 
-    <!-- 게임 모드 -->
-    <div id="panelGame" class="panel">
-      <div class="card">
-        <div class="q" id="qGame">시작 버튼을 눌러요!</div>
-        <div class="inputs">
-          <input type="number" id="ansGame" placeholder="답 입력" />
-          <button class="btn" id="btnCheckGame">확인</button>
-          <button class="btn secondary" id="btnStartGame">다시 시작</button>
-        </div>
-        <div id="resGame" class="result"></div>
-        <div class="scorebar">
-          <span class="badge" id="scoreNow">점수: 0</span>
-          <span class="badge" id="timeLeft">남은 시간: 30초</span>
-          <span class="badge" id="bestScore">최고점: 0</span>
-        </div>
+    <div class="card">
+      <div class="q" id="question">모드를 선택하세요</div>
+      <div id="vizGrid"></div>
+      <div id="answerDisplay"></div>
+      <div class="num-pad">
+        <button onclick="pressNum(1)">1</button>
+        <button onclick="pressNum(2)">2</button>
+        <button onclick="pressNum(3)">3</button>
+        <button onclick="pressNum(4)">4</button>
+        <button onclick="pressNum(5)">5</button>
+        <button onclick="pressNum(6)">6</button>
+        <button onclick="pressNum(7)">7</button>
+        <button onclick="pressNum(8)">8</button>
+        <button onclick="pressNum(9)">9</button>
+        <button onclick="pressDel()" class="action">⌫</button>
+        <button onclick="pressNum(0)">0</button>
+        <button onclick="checkAnswer()" class="action">확인</button>
       </div>
+      <button class="btn secondary" style="width:100%" onclick="newQuestion()">다음 문제</button>
+      <div id="result" class="result"></div>
+      <div id="hint" class="hint"></div>
+      <button id="btnShowAnswer">정답 보기</button>
     </div>
   </div>
 
   <script>
-    let a=0,b=0; let score=0,tLeft=30,timer=null; 
-    let best=parseInt(localStorage.getItem('gugu_best')||'0',10);
-
-    // 탭 전환
-    const panelPractice=document.getElementById('panelPractice');
-    const panelGame=document.getElementById('panelGame');
-    document.getElementById('tabPractice').onclick=()=>{panelPractice.classList.add('active');panelGame.classList.remove('active');};
-    document.getElementById('tabGame').onclick=()=>{panelGame.classList.add('active');panelPractice.classList.remove('active');};
-
-    // 연습 모드
-    const qPractice=document.getElementById('qPractice');
-    const ansPractice=document.getElementById('ansPractice');
-    const resPractice=document.getElementById('resPractice');
-    const hintPractice=document.getElementById('hintPractice');
-    const btnCheckPractice=document.getElementById('btnCheckPractice');
-    const btnNextPractice=document.getElementById('btnNextPractice');
-    const btnShowAnswer=document.getElementById('btnShowAnswer');
-    const vizGrid=document.getElementById('vizGrid');
+    let mode=null, level="easy";
+    let a=0,b=0,op="",correct=0;
+    const qEl=document.getElementById('question');
+    const resEl=document.getElementById('result');
+    const hintEl=document.getElementById('hint');
+    const btnShow=document.getElementById('btnShowAnswer');
+    const viz=document.getElementById('vizGrid');
+    const ansDisplay=document.getElementById('answerDisplay');
+    let answer="";
 
     function rndInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
-    function drawAppleGrid(){let html='';for(let i=0;i<b;i++){html+=`<div class="viz-row">${"🍎".repeat(a)}</div>`;}vizGrid.innerHTML=html;}
-    function makePracticeQ(){a=rndInt(2,9);b=rndInt(1,9);qPractice.textContent=`${a} × ${b} = ?`;ansPractice.value='';resPractice.textContent='';hintPractice.style.display='none';btnShowAnswer.style.display='none';drawAppleGrid();}
-    function makeHint(a,b){return `
-      <strong>힌트:</strong><br>
-      • ${a}를 ${b}번 더하면 얼마일까요?<br>
-      • 순서를 바꿔도 같아요: ${a}×${b} = ${b}×${a}<br>
-      • 나눠서 생각해도 돼요. 예: ${a}×${b} = ${a}×5 + ${a}×${b-5}
-    `;}
 
-    btnCheckPractice.onclick=()=>{
-      const v=parseInt(ansPractice.value,10);
-      if(v===a*b){
-        resPractice.innerHTML=`<span class="ok">정답! 👍</span>`;
-        hintPractice.style.display='none';btnShowAnswer.style.display='none';
-      }else{
-        resPractice.innerHTML=`<span class="ng">틀렸어요 😅 다시 시도해보세요</span>`;
-        hintPractice.innerHTML=makeHint(a,b);hintPractice.style.display='block';
-        btnShowAnswer.style.display='inline-block';
-        btnShowAnswer.onclick=()=>{resPractice.innerHTML=`정답은 <strong>${a*b}</strong> 입니다.`;btnShowAnswer.style.display='none';};
+    function setMode(m){
+      mode=m;
+      document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+      event.target.classList.add('active');
+      newQuestion();
+    }
+
+    function setLevel(l){
+      level=l;
+      document.querySelectorAll('.levels button').forEach(b=>b.classList.remove('active'));
+      event.target.classList.add('active');
+      newQuestion();
+    }
+
+    function newQuestion(){
+      resEl.textContent=""; hintEl.style.display="none"; btnShow.style.display="none"; viz.innerHTML="";
+      answer=""; ansDisplay.textContent="";
+      if(mode==="add"){ 
+        let max = level==="easy"?20:level==="normal"?50:100;
+        a=rndInt(1,max); b=rndInt(1,max); op="+"; correct=a+b;
+        qEl.textContent=`${a} + ${b} = ?`;
       }
-    };
-    btnNextPractice.onclick=makePracticeQ;
-    ansPractice.addEventListener('keydown',e=>{if(e.key==='Enter')btnCheckPractice.click();});
-    makePracticeQ();
+      else if(mode==="sub"){
+        let max = level==="easy"?20:level==="normal"?50:100;
+        a=rndInt(1,max); b=rndInt(1,max);
+        if(b>a)[a,b]=[b,a];
+        op="-"; correct=a-b; qEl.textContent=`${a} - ${b} = ?`;
+      }
+      else if(mode==="mul"){
+        if(level==="easy"){a=rndInt(2,5); b=rndInt(1,5);}
+        else if(level==="normal"){a=rndInt(2,9); b=rndInt(1,9);}
+        else {a=rndInt(2,12); b=rndInt(2,12);}
+        op="×"; correct=a*b;
+        if(Math.random()<0.5){
+          qEl.textContent=`사과 ${a}개가 ${b}줄 있으면 모두 몇 개인가요?`;
+        }else{
+          qEl.textContent=`${a} × ${b} = ?`;
+        }
+        drawApples(a,b);
+      }
+      else if(mode==="mix"){
+        const pick=["add","sub","mul"][rndInt(0,2)];
+        setMode(pick); return;
+      }
+    }
 
-    // 게임 모드
-    const qGame=document.getElementById('qGame');const ansGame=document.getElementById('ansGame');const resGame=document.getElementById('resGame');
-    const btnCheckGame=document.getElementById('btnCheckGame');const btnStartGame=document.getElementById('btnStartGame');
-    const scoreNow=document.getElementById('scoreNow');const timeLeft=document.getElementById('timeLeft');const bestScoreEl=document.getElementById('bestScore');bestScoreEl.textContent=`최고점: ${best}`;
+    function drawApples(a,b){
+      let html="";
+      for(let i=0;i<b;i++){html+=`<div class="viz-row">${"🍎".repeat(a)}</div>`;}
+      viz.innerHTML=html;
+    }
 
-    function makeGameQ(){a=rndInt(2,9);b=rndInt(1,9);qGame.textContent=`${a} × ${b} = ?`;ansGame.value='';resGame.textContent='';}
-    function drawHud(){scoreNow.textContent=`점수: ${score}`;timeLeft.textContent=`남은 시간: ${tLeft}초`;}
-    function tick(){tLeft--;drawHud();if(tLeft<=0)endGame();}
-    function startGame(){if(timer)clearInterval(timer);score=0;tLeft=30;drawHud();makeGameQ();timer=setInterval(tick,1000);}
-    function endGame(){clearInterval(timer);timer=null;resGame.innerHTML=`게임 종료! 최종 점수: ${score}`;if(score>best){best=score;localStorage.setItem('gugu_best',best);bestScoreEl.textContent=`최고점: ${best}`;}}
-    btnStartGame.onclick=startGame;
-    btnCheckGame.onclick=()=>{if(!timer){startGame();return;}const v=parseInt(ansGame.value,10);if(v===a*b){score+=10;resGame.innerHTML="정답! +10점";}else{resGame.innerHTML="오답 😅";}drawHud();makeGameQ();};
-    ansGame.addEventListener('keydown',e=>{if(e.key==='Enter')btnCheckGame.click();});
+    function makeHint(){
+      if(op==="+") return `${a}+${b}는 ${a}부터 ${b}만큼 더 가는 거예요.`;
+      if(op==="-") return `${a}-${b}는 ${a}에서 ${b}만큼 빼는 거예요.`;
+      if(op==="×") return `${a}×${b}는 ${a}를 ${b}번 더한 것과 같아요.<br>예: ${Array(b).fill(a).join(" + ")}`;
+      return "";
+    }
+
+    function checkAnswer(){
+      const v=parseInt(answer,10);
+      if(v===correct){
+        resEl.innerHTML=`<span class="ok">정답! 👍</span>`;
+        hintEl.style.display="none"; btnShow.style.display="none";
+      }else{
+        resEl.innerHTML=`<span class="ng">틀렸어요 😅 다시 시도해보세요</span>`;
+        hintEl.innerHTML=makeHint(); hintEl.style.display="block";
+        btnShow.style.display="inline-block";
+        btnShow.onclick=()=>{resEl.innerHTML=`정답은 <strong>${correct}</strong> 입니다.`;btnShow.style.display="none";};
+      }
+    }
+
+    function pressNum(n){
+      if(answer.length<5){answer+=n; ansDisplay.textContent=answer;}
+    }
+    function pressDel(){
+      answer=answer.slice(0,-1); ansDisplay.textContent=answer;
+    }
+
+    // 시작 시
+    setMode('add'); setLevel('easy');
   </script>
 </body>
 </html>
