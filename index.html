@@ -1,239 +1,619 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>기초수학</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family:'Jua', sans-serif;
-      margin:0;
-      background:linear-gradient(to bottom,#a8edea,#fed6e3);
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:12px;
-    }
-    .app {
-      width:100%;
-      max-width:480px;
-      background:#fff;
-      border-radius:20px;
-      box-shadow:0 6px 20px rgba(0,0,0,.1);
-      padding:16px;
-    }
-    h1 { text-align:center; margin:0 0 16px; font-size:26px; }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F4F4F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131614" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23E29215'/><text x='50' y='72' font-size='66' font-family='sans-serif' font-weight='600' text-anchor='middle' fill='%233F2A05'>&#215;</text></svg>">
+<title>곱셈 연습</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;500;700;900&family=Outfit:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F4F4F1; --surface:#FFFFFF; --surface-2:#ECEDE8;
+  --ink:#191C1A; --muted:#656D68; --line:#DFE1DB;
+  --accent:#E29215; --accent-ink:#3F2A05; --accent-soft:#FBEDD4;
+  --deep:#12574E; --deep-soft:#DCEAE6;
+  --ok:#1B9A5F; --ok-soft:#DFF3E8;
+  --bad:#D2445B; --bad-soft:#FAE2E5;
+  --key:#FFFFFF; --key-edge:#D3D6CF;
+  --r:16px;
+  --font-ko:'Gothic A1',system-ui,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  --font-num:'Outfit','Gothic A1',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131614; --surface:#1C201D; --surface-2:#262B27;
+    --ink:#ECF0EC; --muted:#9AA49E; --line:#333A35;
+    --accent:#F2A93B; --accent-ink:#2A1C04; --accent-soft:#3A2E14;
+    --deep:#6FD1BE; --deep-soft:#1E332F;
+    --ok:#41C083; --ok-soft:#18301F;
+    --bad:#F2697D; --bad-soft:#36191E;
+    --key:#262B27; --key-edge:#3B423C;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131614; --surface:#1C201D; --surface-2:#262B27;
+  --ink:#ECF0EC; --muted:#9AA49E; --line:#333A35;
+  --accent:#F2A93B; --accent-ink:#2A1C04; --accent-soft:#3A2E14;
+  --deep:#6FD1BE; --deep-soft:#1E332F;
+  --ok:#41C083; --ok-soft:#18301F;
+  --bad:#F2697D; --bad-soft:#36191E;
+  --key:#262B27; --key-edge:#3B423C;
+}
 
-    /* 상단 모드 버튼 */
-    .tabs {
-      display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:12px;
-    }
-    .tabs button {
-      border:none; border-radius:999px; padding:10px 16px;
-      font-size:16px; background:#ff9a9e; color:#fff; cursor:pointer;
-      transition:.2s;
-    }
-    .tabs button.active, .tabs button:hover { background:#ff6a88; }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--font-ko); font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior:none; touch-action:manipulation;
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
 
-    /* 난이도 버튼 */
-    .levels {
-      display:flex; gap:8px; justify-content:center; margin-bottom:16px;
-    }
-    .levels button {
-      border:2px solid #ff9a9e; border-radius:999px; padding:8px 14px;
-      font-size:15px; background:#fff; color:#ff6a88; cursor:pointer;
-      transition:.2s;
-    }
-    .levels button.active, .levels button:hover {
-      background:#ff9a9e; color:#fff;
-    }
+#app{
+  display:flex; flex-direction:column;
+  height:100vh; height:100dvh;
+  max-width:540px; margin:0 auto;
+  padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+}
+.screen{display:none; flex:1; min-height:0; flex-direction:column}
+.screen.on{display:flex}
+.scroll{overflow-y:auto; -webkit-overflow-scrolling:touch}
 
-    .card {
-      border:2px solid #f1f5f9; border-radius:14px; padding:14px;
-    }
-    .q { font-size:30px; text-align:center; margin:14px 0; min-height:40px; }
-    #vizGrid { text-align:center; margin:6px 0; }
-    .viz-row { line-height:1.6; font-size:20px; }
+/* ---------- home ---------- */
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.mark{
+  width:38px;height:38px;border-radius:12px;background:var(--accent);
+  display:grid;place-items:center;color:var(--accent-ink);
+  font-family:var(--font-num);font-weight:700;font-size:20px;
+}
+.brand h1{margin:0;font-size:21px;font-weight:900;letter-spacing:-.02em}
 
-    #answerDisplay {
-      width:100%; text-align:center;
-      font-size:28px; padding:12px; border:2px solid #ddd; border-radius:10px;
-      margin-bottom:12px; min-height:40px; background:#fafafa;
-    }
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:22px}
+.strip div{background:var(--surface);padding:12px 10px;text-align:center}
+.strip b{display:block;font-family:var(--font-num);font-size:24px;font-weight:600;line-height:1.1}
+.strip span{font-size:11.5px;color:var(--muted);letter-spacing:.04em}
+.strip .hot b{color:var(--bad)}
 
-    /* 숫자 키패드 */
-    .num-pad {
-      display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:12px;
-    }
-    .num-pad button {
-      font-size:22px; padding:16px; border:none; border-radius:12px;
-      background:#e5e7eb; cursor:pointer;
-      transition:.2s;
-    }
-    .num-pad button:active { background:#d1d5db; }
-    .num-pad button.action { background:#475569; color:#fff; }
+.label{font-size:12px;font-weight:700;letter-spacing:.09em;color:var(--muted);margin:0 0 10px 2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.chip{
+  min-width:56px;padding:11px 4px;border-radius:12px;background:var(--surface);
+  border:1.5px solid var(--line);font-family:var(--font-num);font-weight:600;font-size:16px;
+  text-align:center;flex:1;transition:transform .08s ease;
+}
+.chip .ko{font-family:var(--font-ko);font-size:12px;font-weight:500;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--deep-soft);border-color:var(--deep);color:var(--deep)}
+.chip[aria-pressed="true"] .ko{color:var(--deep)}
+.chip:active{transform:scale(.96)}
 
-    /* 하단 버튼 */
-    .btn {
-      border:none; border-radius:10px; padding:12px; font-size:16px;
-      cursor:pointer; background:#ff9a9e; color:#fff; width:100%;
-    }
-    .btn:hover { background:#ff6a88; }
+.seg{display:flex;gap:8px;margin-bottom:26px}
+.seg button{flex:1;padding:11px 0;border-radius:12px;background:var(--surface);border:1.5px solid var(--line);
+  font-family:var(--font-num);font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--deep-soft);border-color:var(--deep);color:var(--deep)}
 
-    .result { text-align:center; font-size:18px; min-height:24px; margin:8px 0; }
-    .ok { color:#1a9c50; }
-    .ng { color:#d93025; }
-    .hint {
-      margin-top:8px; background:#fff7ed; border:1px solid #fed7aa; color:#7c2d12;
-      padding:8px 10px; border-radius:10px; font-size:15px; display:none;
-    }
-    .hint strong { color:#b45309; }
+.home-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:18px}
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:18px;border-radius:var(--r);font-weight:700;font-size:17px;
+  transition:transform .08s ease;
+}
+.btn:active{transform:translateY(2px)}
+.btn-main{background:var(--accent);color:var(--accent-ink);box-shadow:0 3px 0 rgba(0,0,0,.14)}
+.btn-row{display:flex;gap:10px}
+.btn-sub{flex:1;background:var(--surface);border:1.5px solid var(--line);font-size:15px;padding:15px}
+.btn-sub .badge{
+  font-family:var(--font-num);background:var(--bad);color:#fff;border-radius:999px;
+  padding:1px 8px;font-size:13px;font-weight:700;
+}
+.btn-sub:disabled{opacity:.45}
 
-    #btnShowAnswer {
-      display:none; width:100%; padding:10px; margin-top:8px;
-      font-size:16px; border:none; border-radius:10px;
-      background:#475569; color:#fff; cursor:pointer;
-    }
-  </style>
+/* ---------- quiz ---------- */
+.qtop{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.iconbtn{width:38px;height:38px;border-radius:11px;background:var(--surface);border:1.5px solid var(--line);
+  display:grid;place-items:center;font-size:17px;flex:none}
+.bar{flex:1;height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--deep);border-radius:999px;transition:width .25s ease}
+.count{font-family:var(--font-num);font-size:13px;color:var(--muted);flex:none;min-width:52px;text-align:right}
+
+.stage{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;min-height:0;padding:8px 0}
+.card{
+  width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:24px;
+  padding:24px 20px;text-align:center;
+}
+.card.good{background:var(--ok-soft);border-color:var(--ok)}
+.card.bad{background:var(--bad-soft);border-color:var(--bad)}
+.q{font-family:var(--font-num);font-weight:500;font-size:clamp(40px,13vw,68px);line-height:1.1;letter-spacing:-.01em}
+.q .x{color:var(--muted);margin:0 .12em}
+.ans{
+  font-family:var(--font-num);font-weight:600;font-size:clamp(40px,13vw,68px);line-height:1.1;
+  min-width:2.1ch;display:inline-block;color:var(--accent);
+}
+.ans.empty{color:var(--line)}
+.card.good .ans{color:var(--ok)}
+.card.bad .ans{color:var(--bad)}
+.msg{min-height:26px;font-size:15px;font-weight:700;color:var(--muted);text-align:center}
+.msg.good{color:var(--ok)}
+.msg.bad{color:var(--bad)}
+.streak{
+  font-size:12.5px;font-weight:700;color:var(--accent);background:var(--accent-soft);
+  padding:4px 12px;border-radius:999px;opacity:0;transition:opacity .2s
+}
+.streak.on{opacity:1}
+.shake{animation:shake .32s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.pop{animation:pop .25s}
+@keyframes pop{0%{transform:scale(.94)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.shake,.pop{animation:none}.bar i{transition:none}}
+
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex:none}
+.key{
+  height:clamp(58px,9.5vh,78px);border-radius:14px;background:var(--key);
+  border:1.5px solid var(--line);box-shadow:0 3px 0 var(--key-edge);
+  font-family:var(--font-num);font-size:27px;font-weight:500;
+  display:grid;place-items:center;transition:transform .06s ease,box-shadow .06s ease;
+}
+.key:active{transform:translateY(3px);box-shadow:0 0 0 var(--key-edge)}
+.key.util{font-size:21px;background:var(--surface-2);color:var(--muted)}
+.key.go{background:var(--accent);color:var(--accent-ink);border-color:transparent;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+
+/* ---------- result ---------- */
+.result{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:0}
+.ring{position:relative;width:168px;height:168px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .mid{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring .mid b{font-family:var(--font-num);font-size:42px;font-weight:600;line-height:1}
+.ring .mid span{font-size:12px;color:var(--muted);letter-spacing:.06em}
+.rtitle{font-size:20px;font-weight:900;margin:14px 0 2px}
+.rsub{font-size:14px;color:var(--muted);margin-bottom:16px}
+.misses{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-height:26vh;overflow-y:auto;padding:2px}
+.miss{
+  font-family:var(--font-num);font-size:15px;font-weight:500;background:var(--bad-soft);
+  color:var(--bad);border-radius:10px;padding:8px 12px;
+}
+.miss s{opacity:.6;text-decoration-thickness:1.5px;margin-left:6px;font-size:13px}
+
+/* ---------- stats ---------- */
+.stats-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.stats-head h2{margin:0;font-size:19px;font-weight:900}
+.table{width:100%;border-collapse:collapse;font-family:var(--font-num);table-layout:fixed}
+.table th{font-weight:500;font-size:13px;color:var(--muted);padding:4px 0}
+.table td{padding:2px}
+.cell{
+  border-radius:9px;background:var(--surface-2);color:var(--muted);
+  font-size:13px;font-weight:500;text-align:center;padding:9px 0;border:1.5px solid transparent;
+}
+.cell.solid{background:var(--ok-soft);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
+.cell.learn{background:var(--accent-soft);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+.cell.weak{background:var(--bad-soft);color:var(--bad);border-color:var(--bad);font-weight:700}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:14px 0 22px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:5px;vertical-align:-1px}
+.list{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:var(--r);overflow:hidden}
+.list div{background:var(--surface);display:flex;justify-content:space-between;align-items:center;padding:13px 15px}
+.list b{font-family:var(--font-num);font-weight:500;font-size:17px}
+.list span{font-size:13px;color:var(--bad);font-weight:700}
+.empty-note{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r);
+  padding:22px;text-align:center;color:var(--muted);font-size:14px}
+.reset{margin:24px 0 6px;align-self:center;font-size:13px;color:var(--muted);text-decoration:underline;padding:8px}
+.toggle{display:flex;justify-content:space-between;align-items:center;background:var(--surface);
+  border:1.5px solid var(--line);border-radius:var(--r);padding:13px 15px;margin-top:18px;font-size:15px;font-weight:700}
+.sw{width:50px;height:30px;border-radius:999px;background:var(--surface-2);border:1.5px solid var(--line);position:relative;flex:none}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+  background:var(--muted);transition:transform .18s ease}
+.sw[aria-pressed="true"]{background:var(--deep-soft);border-color:var(--deep)}
+.sw[aria-pressed="true"]::after{background:var(--deep);transform:translateX(20px)}
+</style>
+
 </head>
 <body>
-  <div class="app">
-    <h1>기초수학</h1>
+<div id="app">
 
-    <div class="tabs">
-      <button onclick="setMode('add')">덧셈</button>
-      <button onclick="setMode('sub')">뺄셈</button>
-      <button onclick="setMode('mul')">곱셈</button>
-      <button onclick="setMode('mix')">전체</button>
+  <!-- ================= HOME ================= -->
+  <section class="screen on scroll" id="s-home">
+    <div class="brand">
+      <div class="mark num">×</div>
+      <h1>곱셈 연습</h1>
     </div>
 
-    <div class="levels">
-      <button onclick="setLevel('easy')">쉬움</button>
-      <button onclick="setLevel('normal')">보통</button>
-      <button onclick="setLevel('hard')">어려움</button>
+    <div class="strip">
+      <div><b class="num" id="h-solved">0</b><span>푼 문제</span></div>
+      <div><b class="num" id="h-acc">–</b><span>정답률</span></div>
+      <div class="hot"><b class="num" id="h-weak">0</b><span>집중 문제</span></div>
     </div>
 
-    <div class="card">
-      <div class="q" id="question">모드를 선택하세요</div>
-      <div id="vizGrid"></div>
-      <div id="answerDisplay"></div>
-      <div class="num-pad">
-        <button onclick="pressNum(1)">1</button>
-        <button onclick="pressNum(2)">2</button>
-        <button onclick="pressNum(3)">3</button>
-        <button onclick="pressNum(4)">4</button>
-        <button onclick="pressNum(5)">5</button>
-        <button onclick="pressNum(6)">6</button>
-        <button onclick="pressNum(7)">7</button>
-        <button onclick="pressNum(8)">8</button>
-        <button onclick="pressNum(9)">9</button>
-        <button onclick="pressDel()" class="action">⌫</button>
-        <button onclick="pressNum(0)">0</button>
-        <button onclick="checkAnswer()" class="action">확인</button>
+    <p class="label">연습할 단</p>
+    <div class="chips" id="tables"></div>
+
+    <p class="label">문제 수</p>
+    <div class="seg" id="counts"></div>
+
+    <div class="home-foot">
+      <button class="btn btn-main" id="go">시작하기</button>
+      <div class="btn-row">
+        <button class="btn btn-sub" id="go-review">틀린 문제 <span class="badge num" id="review-n">0</span></button>
+        <button class="btn btn-sub" id="go-stats">기록</button>
       </div>
-      <button class="btn" onclick="newQuestion()">다음 문제</button>
-      <div id="result" class="result"></div>
-      <div id="hint" class="hint"></div>
-      <button id="btnShowAnswer">정답 보기</button>
     </div>
-  </div>
+  </section>
 
-  <script>
-    let mode=null, level="easy";
-    let a=0,b=0,op="",correct=0;
-    const qEl=document.getElementById('question');
-    const resEl=document.getElementById('result');
-    const hintEl=document.getElementById('hint');
-    const btnShow=document.getElementById('btnShowAnswer');
-    const viz=document.getElementById('vizGrid');
-    const ansDisplay=document.getElementById('answerDisplay');
-    let answer="";
+  <!-- ================= QUIZ ================= -->
+  <section class="screen" id="s-quiz">
+    <div class="qtop">
+      <button class="iconbtn" id="quit" aria-label="그만하기">✕</button>
+      <div class="bar"><i id="prog"></i></div>
+      <div class="count num" id="pos">1 / 20</div>
+    </div>
 
-    function rndInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+    <div class="stage">
+      <div class="card" id="card">
+        <div class="q num"><span id="qa">4</span><span class="x">×</span><span id="qb">7</span><span class="x">=</span><span class="ans empty" id="ansbox">?</span></div>
+      </div>
+      <div class="msg" id="msg"></div>
+      <div class="streak" id="streak"></div>
+    </div>
 
-    function setMode(m){
-      mode=m;
-      document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
-      event.target.classList.add('active');
-      newQuestion();
+    <div class="pad" id="pad"></div>
+  </section>
+
+  <!-- ================= RESULT ================= -->
+  <section class="screen" id="s-done">
+    <div class="result">
+      <div class="ring">
+        <svg width="168" height="168" viewBox="0 0 168 168">
+          <circle cx="84" cy="84" r="72" fill="none" stroke="var(--surface-2)" stroke-width="14"></circle>
+          <circle cx="84" cy="84" r="72" fill="none" stroke="var(--ok)" stroke-width="14" stroke-linecap="round"
+                  id="ringfill" stroke-dasharray="452" stroke-dashoffset="452"></circle>
+        </svg>
+        <div class="mid"><div><b class="num" id="r-acc">0%</b><span>정답률</span></div></div>
+      </div>
+      <div class="rtitle" id="r-title">잘했어!</div>
+      <div class="rsub num" id="r-sub">20문제 중 18개 정답 · 4분 12초</div>
+      <div class="misses" id="r-miss"></div>
+    </div>
+    <div class="home-foot">
+      <button class="btn btn-main" id="again">한 번 더</button>
+      <div class="btn-row">
+        <button class="btn btn-sub" id="fix">틀린 것만 다시</button>
+        <button class="btn btn-sub" id="home">처음으로</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STATS ================= -->
+  <section class="screen scroll" id="s-stats">
+    <div class="stats-head">
+      <button class="iconbtn" id="back" aria-label="뒤로">←</button>
+      <h2>기록</h2>
+    </div>
+    <table class="table" id="grid"></table>
+    <div class="legend">
+      <span><i style="background:var(--ok)"></i>익숙함</span>
+      <span><i style="background:var(--accent)"></i>연습 중</span>
+      <span><i style="background:var(--bad)"></i>집중 필요</span>
+      <span><i style="background:var(--surface-2)"></i>아직 안 풂</span>
+    </div>
+    <p class="label">자주 틀리는 문제</p>
+    <div id="toplist"></div>
+    <button class="toggle" id="sound" aria-pressed="true">소리<span class="sw" aria-pressed="true"></span></button>
+    <button class="reset" id="reset">기록 모두 지우기</button>
+  </section>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(s){ return document.querySelector(s); };
+var KEY = "gugu.v1";
+var ALL = [2,3,4,5,6,7,8,9];
+
+/* ---------- state ---------- */
+var S = { tables:[4,5,6,7,8,9], count:20, sound:true, stats:{}, solved:0, right:0 };
+try{
+  var raw = localStorage.getItem(KEY);
+  if(raw){ var p = JSON.parse(raw); for(var k in p){ if(p[k]!==undefined) S[k]=p[k]; } }
+}catch(e){}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+function key(a,b){ return Math.min(a,b)+"x"+Math.max(a,b); }
+function stat(k){ return S.stats[k] || (S.stats[k] = {a:0,c:0,st:0}); }
+function weakKeys(){
+  var out=[];
+  for(var k in S.stats){ var s=S.stats[k]; if(s.a-s.c>0 && s.st<3) out.push(k); }
+  out.sort(function(x,y){ return (S.stats[y].a-S.stats[y].c)-(S.stats[x].a-S.stats[x].c); });
+  return out;
+}
+
+/* ---------- sound ---------- */
+var ac=null;
+function beep(kind){
+  if(!S.sound) return;
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    var o=ac.createOscillator(), g=ac.createGain(), t=ac.currentTime;
+    o.connect(g); g.connect(ac.destination); o.type="sine";
+    if(kind==="ok"){ o.frequency.setValueAtTime(680,t); o.frequency.setValueAtTime(1020,t+0.08); }
+    else if(kind==="bad"){ o.type="triangle"; o.frequency.setValueAtTime(190,t); }
+    else { o.frequency.setValueAtTime(520,t); }
+    var peak = kind==="tap" ? 0.04 : 0.11;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(peak,t+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+(kind==="bad"?0.26:0.17));
+    o.start(t); o.stop(t+0.3);
+  }catch(e){}
+}
+
+/* ---------- screens ---------- */
+function show(id){
+  var list = document.querySelectorAll(".screen");
+  for(var i=0;i<list.length;i++) list[i].classList.toggle("on", list[i].id===id);
+  if(id==="s-home") paintHome();
+  if(id==="s-stats") paintStats();
+}
+
+/* ---------- home ---------- */
+var tablesEl=$("#tables"), countsEl=$("#counts");
+ALL.forEach(function(n){
+  var b=document.createElement("button");
+  b.className="chip"; b.type="button";
+  b.innerHTML = n + '<span class="ko">단</span>';
+  b.setAttribute("aria-pressed", S.tables.indexOf(n)>=0);
+  b.onclick=function(){
+    var i=S.tables.indexOf(n);
+    if(i>=0){ if(S.tables.length===1) return; S.tables.splice(i,1); }
+    else S.tables.push(n);
+    b.setAttribute("aria-pressed", i<0); save();
+  };
+  tablesEl.appendChild(b);
+});
+[10,20,30].forEach(function(n){
+  var b=document.createElement("button"); b.type="button"; b.textContent=n;
+  b.setAttribute("aria-pressed", S.count===n);
+  b.onclick=function(){
+    S.count=n; save();
+    var kids=countsEl.children;
+    for(var i=0;i<kids.length;i++) kids[i].setAttribute("aria-pressed", kids[i]===b);
+  };
+  countsEl.appendChild(b);
+});
+function paintHome(){
+  $("#h-solved").textContent = S.solved;
+  $("#h-acc").textContent = S.solved ? Math.round(S.right/S.solved*100)+"%" : "–";
+  var w = weakKeys();
+  $("#h-weak").textContent = w.length;
+  $("#review-n").textContent = w.length;
+  $("#go-review").disabled = w.length===0;
+}
+
+/* ---------- question building ---------- */
+function weight(k){
+  var s=S.stats[k];
+  if(!s || s.a===0) return 3;
+  var wrong = s.a-s.c, w = 1 + wrong*2.5;
+  if(s.st===0) w += 3.5; else if(s.st===1) w += 1.5; else if(s.st>=3) w *= 0.4;
+  return Math.max(0.35, w);
+}
+function pick(pool, used){
+  var tot=0, i, ws=[];
+  for(i=0;i<pool.length;i++){
+    var w = weight(pool[i].k) / (1 + (used[pool[i].k]||0)*3);
+    ws.push(w); tot+=w;
+  }
+  var r=Math.random()*tot;
+  for(i=0;i<pool.length;i++){ r-=ws[i]; if(r<=0) return pool[i]; }
+  return pool[pool.length-1];
+}
+function buildPractice(n){
+  var pool=[], used={}, out=[], i, j;
+  for(i=0;i<S.tables.length;i++){
+    for(j=2;j<=9;j++){
+      var a=S.tables[i];
+      pool.push({a:a, b:j, k:key(a,j)});
     }
+  }
+  var last="";
+  for(i=0;i<n;i++){
+    var q=pick(pool,used), guard=0;
+    while(q.k===last && pool.length>1 && guard++<8) q=pick(pool,used);
+    used[q.k]=(used[q.k]||0)+1; last=q.k;
+    out.push(flip(q));
+  }
+  return out;
+}
+function buildReview(n, keys){
+  var ks = keys || weakKeys(), out=[], i=0;
+  if(!ks.length) return [];
+  while(out.length < Math.min(n, Math.max(ks.length*2, 6))){
+    var k = ks[i % ks.length];
+    var p = k.split("x");
+    out.push(flip({a:+p[0], b:+p[1], k:k}));
+    i++;
+    if(i > 200) break;
+  }
+  for(i=out.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=out[i]; out[i]=out[j]; out[j]=t; }
+  return out;
+}
+function flip(q){
+  return Math.random()<0.35 ? {a:q.b, b:q.a, k:q.k} : {a:q.a, b:q.b, k:q.k};
+}
 
-    function setLevel(l){
-      level=l;
-      document.querySelectorAll('.levels button').forEach(b=>b.classList.remove('active'));
-      event.target.classList.add('active');
-      newQuestion();
-    }
+/* ---------- quiz ---------- */
+var Q = null;
+function start(mode, keys){
+  var queue = mode==="review" ? buildReview(S.count, keys) : buildPractice(S.count);
+  if(!queue.length) return;
+  Q = { queue:queue, i:0, right:0, miss:[], requeued:{}, t0:Date.now(), input:"", phase:"ask", streak:0, mode:mode, keys:keys||null };
+  show("s-quiz"); render();
+}
+function cur(){ return Q.queue[Q.i]; }
+function render(){
+  var q=cur();
+  $("#qa").textContent=q.a; $("#qb").textContent=q.b;
+  $("#card").className="card";
+  $("#msg").textContent=""; $("#msg").className="msg";
+  Q.input=""; Q.phase="ask"; Q.qt=Date.now();
+  paintAns();
+  $("#pos").textContent=(Q.i+1)+" / "+Q.queue.length;
+  $("#prog").style.width=(Q.i/Q.queue.length*100)+"%";
+  var st=$("#streak");
+  if(Q.streak>=3){ st.textContent="연속 "+Q.streak+"개"; st.classList.add("on"); }
+  else st.classList.remove("on");
+}
+function paintAns(){
+  var el=$("#ansbox");
+  el.textContent = Q.input || "?";
+  el.classList.toggle("empty", !Q.input);
+}
+function press(d){
+  if(!Q) return;
+  beep("tap");
+  if(d==="del"){ Q.input=Q.input.slice(0,-1); paintAns(); return; }
+  if(d==="ok"){ if(Q.input) judge(); return; }
+  if(Q.input.length>=2) Q.input="";
+  Q.input += d; paintAns();
+  var target=String(cur().a*cur().b);
+  if(Q.input.length>=target.length) setTimeout(judge, 110);
+}
+function judge(){
+  var q=cur(), ans=q.a*q.b, val=parseInt(Q.input,10);
+  if(Q.phase==="fix"){
+    if(val===ans){ beep("ok"); $("#card").classList.add("pop"); setTimeout(next,260); }
+    else { Q.input=""; paintAns(); $("#card").classList.add("shake"); setTimeout(function(){$("#card").classList.remove("shake");},330); }
+    return;
+  }
+  var s=stat(q.k); s.a++;
+  if(val===ans){
+    s.c++; s.st++; Q.right++; Q.streak++;
+    S.solved++; S.right++;
+    beep("ok");
+    $("#card").className="card good pop";
+    $("#msg").textContent=["정답!","좋아!","맞았어!","완벽해!"][Math.floor(Math.random()*4)];
+    $("#msg").className="msg good";
+    save(); setTimeout(next, 480);
+  }else{
+    s.st=0; Q.streak=0; S.solved++;
+    Q.miss.push({a:q.a,b:q.b,ans:ans,got:Q.input});
+    beep("bad");
+    $("#card").className="card bad shake";
+    $("#msg").innerHTML='<span class="num">'+q.a+" × "+q.b+" = "+ans+"</span> · 답을 눌러 볼까?";
+    $("#msg").className="msg bad";
+    Q.phase="fix"; Q.input=""; paintAns();
+    if(!Q.requeued[q.k] && Q.queue.length<60){ Q.requeued[q.k]=1; Q.queue.push(flip(q)); $("#pos").textContent=(Q.i+1)+" / "+Q.queue.length; }
+    save();
+  }
+}
+function next(){
+  $("#card").className="card";
+  Q.i++;
+  if(Q.i>=Q.queue.length) finish(); else render();
+}
+function finish(){
+  var total=Q.queue.length, right=Q.right;
+  var pct=Math.round(right/total*100);
+  var secs=Math.round((Date.now()-Q.t0)/1000);
+  $("#prog").style.width="100%";
+  $("#r-acc").textContent=pct+"%";
+  $("#ringfill").setAttribute("stroke", pct>=90?"var(--ok)":pct>=70?"var(--accent)":"var(--bad)");
+  $("#ringfill").setAttribute("stroke-dashoffset", String(452 - 452*pct/100));
+  $("#r-title").textContent = pct===100?"전부 다 맞았어!" : pct>=90?"아주 잘했어!" : pct>=70?"잘하고 있어!" : "조금 더 연습해 보자";
+  $("#r-sub").textContent = total+"문제 중 "+right+"개 정답 · "+(secs>=60?Math.floor(secs/60)+"분 ":"")+(secs%60)+"초";
+  var box=$("#r-miss"); box.innerHTML="";
+  var seen={};
+  Q.miss.forEach(function(m){
+    var k=key(m.a,m.b); if(seen[k]) return; seen[k]=1;
+    var d=document.createElement("div"); d.className="miss num";
+    d.innerHTML = m.a+" × "+m.b+" = "+m.ans+"<s>"+(m.got||"?")+"</s>";
+    box.appendChild(d);
+  });
+  $("#fix").disabled = Q.miss.length===0;
+  show("s-done");
+}
 
-    function newQuestion(){
-      resEl.textContent=""; hintEl.style.display="none"; btnShow.style.display="none"; viz.innerHTML="";
-      answer=""; ansDisplay.textContent="";
-      if(mode==="add"){ 
-        let max = level==="easy"?20:level==="normal"?50:100;
-        a=rndInt(1,max); b=rndInt(1,max); op="+"; correct=a+b;
-        qEl.textContent=`${a} + ${b} = ?`;
-      }
-      else if(mode==="sub"){
-        let max = level==="easy"?20:level==="normal"?50:100;
-        a=rndInt(1,max); b=rndInt(1,max);
-        if(b>a)[a,b]=[b,a];
-        op="-"; correct=a-b; qEl.textContent=`${a} - ${b} = ?`;
-      }
-      else if(mode==="mul"){
-        if(level==="easy"){a=rndInt(2,5); b=rndInt(1,5);}
-        else if(level==="normal"){a=rndInt(2,9); b=rndInt(1,9);}
-        else {a=rndInt(2,12); b=rndInt(2,12);}
-        op="×"; correct=a*b;
-        if(Math.random()<0.5){
-          qEl.textContent=`사과 ${a}개가 ${b}줄 있으면 모두 몇 개인가요?`;
-        }else{
-          qEl.textContent=`${a} × ${b} = ?`;
-        }
-        drawApples(a,b);
-      }
-      else if(mode==="mix"){
-        const pick=["add","sub","mul"][rndInt(0,2)];
-        setMode(pick); return;
-      }
-    }
+/* keypad */
+var pad=$("#pad");
+["1","2","3","4","5","6","7","8","9"].forEach(function(d){ addKey(d,d,"key"); });
+addKey("del","←","key util"); addKey("0","0","key"); addKey("ok","✓","key go");
+function addKey(v,label,cls){
+  var b=document.createElement("button");
+  b.className=cls; b.textContent=label; b.type="button";
+  b.setAttribute("aria-label", v==="del"?"지우기":v==="ok"?"확인":label);
+  b.onclick=function(){ press(v); };
+  pad.appendChild(b);
+}
+document.addEventListener("keydown", function(e){
+  if(!$("#s-quiz").classList.contains("on")) return;
+  if(e.key>="0"&&e.key<="9") press(e.key);
+  else if(e.key==="Backspace") press("del");
+  else if(e.key==="Enter") press("ok");
+});
 
-    function drawApples(a,b){
-      let html="";
-      for(let i=0;i<b;i++){html+=`<div class="viz-row">${"🍎".repeat(a)}</div>`;}
-      viz.innerHTML=html;
+/* ---------- stats ---------- */
+function paintStats(){
+  var t=$("#grid"), html="<tr><th></th>";
+  for(var b=2;b<=9;b++) html += "<th>"+b+"</th>";
+  html += "</tr>";
+  for(var a=2;a<=9;a++){
+    html += "<tr><th>"+a+"</th>";
+    for(b=2;b<=9;b++){
+      var s=S.stats[key(a,b)], cls="";
+      if(s && s.a>0) cls = s.st>=3 ? "solid" : (s.a-s.c>0 && s.st===0) ? "weak" : "learn";
+      html += '<td><div class="cell '+cls+'">'+(a*b)+"</div></td>";
     }
+    html += "</tr>";
+  }
+  t.innerHTML=html;
 
-    function makeHint(){
-      if(op==="+") return `${a}+${b}는 ${a}부터 ${b}만큼 더 가는 거예요.`;
-      if(op==="-") return `${a}-${b}는 ${a}에서 ${b}만큼 빼는 거예요.`;
-      if(op==="×") return `${a}×${b}는 ${a}를 ${b}번 더한 것과 같아요.<br>예: ${Array(b).fill(a).join(" + ")}`;
-      return "";
-    }
+  var ks=weakKeys().slice(0,8), box=$("#toplist");
+  if(!ks.length){ box.className=""; box.innerHTML='<div class="empty-note">아직 쌓인 오답이 없어요</div>'; }
+  else{
+    box.className="list";
+    box.innerHTML = ks.map(function(k){
+      var p=k.split("x"), s=S.stats[k];
+      return '<div><b class="num">'+p[0]+" × "+p[1]+" = "+(p[0]*p[1])+"</b><span>"+(s.a-s.c)+"번 틀림</span></div>";
+    }).join("");
+  }
+  $("#sound").setAttribute("aria-pressed", S.sound);
+  $("#sound").querySelector(".sw").setAttribute("aria-pressed", S.sound);
+}
 
-    function checkAnswer(){
-      const v=parseInt(answer,10);
-      if(v===correct){
-        resEl.innerHTML=`<span class="ok">정답! 👍</span>`;
-        hintEl.style.display="none"; btnShow.style.display="none";
-      }else{
-        resEl.innerHTML=`<span class="ng">틀렸어요 😅 다시 시도해보세요</span>`;
-        hintEl.innerHTML=makeHint(); hintEl.style.display="block";
-        btnShow.style.display="inline-block";
-        btnShow.onclick=()=>{resEl.innerHTML=`정답은 <strong>${correct}</strong> 입니다.`;btnShow.style.display="none";};
-      }
-    }
-
-    function pressNum(n){
-      if(answer.length<5){answer+=n; ansDisplay.textContent=answer;}
-    }
-    function pressDel(){
-      answer=answer.slice(0,-1); ansDisplay.textContent=answer;
-    }
-
-    // 시작 시
-    setMode('add'); setLevel('easy');
-  </script>
+/* ---------- wiring ---------- */
+$("#go").onclick=function(){ start("practice"); };
+$("#go-review").onclick=function(){ start("review"); };
+$("#go-stats").onclick=function(){ show("s-stats"); };
+$("#back").onclick=function(){ show("s-home"); };
+$("#quit").onclick=function(){ Q=null; show("s-home"); };
+$("#home").onclick=function(){ show("s-home"); };
+$("#again").onclick=function(){ start(Q && Q.mode==="review" ? "review" : "practice", Q && Q.keys); };
+$("#fix").onclick=function(){
+  var ks=[], seen={};
+  Q.miss.forEach(function(m){ var k=key(m.a,m.b); if(!seen[k]){ seen[k]=1; ks.push(k); } });
+  if(ks.length) start("review", ks);
+};
+$("#sound").onclick=function(){
+  S.sound=!S.sound; save();
+  $("#sound").setAttribute("aria-pressed", S.sound);
+  $("#sound").querySelector(".sw").setAttribute("aria-pressed", S.sound);
+  if(S.sound) beep("tap");
+};
+$("#reset").onclick=function(){
+  if(!confirm("모든 기록을 지울까요?")) return;
+  S.stats={}; S.solved=0; S.right=0; save(); paintStats(); paintHome();
+};
+paintHome();
+})();
+</script>
 </body>
 </html>
