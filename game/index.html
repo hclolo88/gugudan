@@ -390,6 +390,11 @@ try{
 function persist(){ G.t = Date.now(); try{ localStorage.setItem(SAVE, JSON.stringify(G)); }catch(e){} }
 function total(){ var s=0; for(var k in G.best) s += G.best[k]||0; return s; }
 function starTotal(){ var s=0; for(var k in G.stars) s += G.stars[k]||0; return s; }
+function withRang(name){
+  var last = name.charCodeAt(name.length-1) - 0xAC00;
+  var batchim = last>=0 && last<11172 && last%28!==0;
+  return name + (batchim ? "이랑" : "랑");
+}
 function fkey(a,b){ return Math.min(a,b)+"x"+Math.max(a,b); }
 function fstat(k){ return G.stats[k] || (G.stats[k]={a:0,c:0,st:0}); }
 function weakList(){
@@ -564,12 +569,13 @@ var CHEER=["좋았어!","멋지다!","바로 그거야!","척척이네!","대단
 function startStage(stage){
   var n = stage==="all" ? 20 : 10;
   var qs = makeQ(stage, n);
-  if(!qs.length) return;
+  if(!qs.length){ show("s-map"); return; }
   P = { stage:stage, qs:qs, i:0, right:0, score:0, combo:0, miss:[], phase:"ask", input:"", qt:0 };
   $("#p-stage").textContent = stage==="all" ? "전체 도전" : stage==="fix" ? "오답 도전" : stage+"단";
   var host=$("#dots"); host.innerHTML="";
   for(var i=0;i<qs.length;i++) host.appendChild(document.createElement("i"));
-  buddy("idle", stage==="fix" ? "틀렸던 문제야. 이번엔 잡자!" : CAST[stage].name+"이랑 "+(stage==="all"?"전체 도전!":stage+"단 가자!"));
+  buddy("idle", stage==="fix" ? "틀렸던 문제야. 이번엔 잡자!"
+    : withRang(CAST[stage].name)+" "+(stage==="all" ? "전체 도전!" : stage+"단 가자!"));
   show("s-play"); renderQ();
 }
 function buddy(mood, text){
@@ -666,6 +672,7 @@ function done(){
   if(cloudOn()) cloudPush();
 
   $("#c-pic").innerHTML = draw(stage, cleared?"happy":"sad");
+  $("#c-stars").style.display = stage==="fix" ? "none" : "";
   var row=$("#c-stars").children, i;
   for(i=0;i<3;i++) row[i].className="";
   setTimeout(function(){
