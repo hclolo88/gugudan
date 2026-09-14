@@ -149,6 +149,17 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-
   box-shadow:0 4px 0 var(--ink);font-family:var(--nm);font-weight:500;font-size:26px;display:grid;place-items:center;
   transition:transform .06s ease,box-shadow .06s ease}
 .k:active{transform:translateY(4px);box-shadow:0 0 0 var(--ink)}
+/* 가로로 눕힌 화면처럼 세로가 짧을 때 */
+@media (max-height:560px){
+  .topbar,.dots{margin-bottom:6px}
+  .k{height:clamp(38px,10.5vh,54px);font-size:21px}
+  .pad{gap:7px;margin-top:7px}
+  .buddy .pic{width:54px}
+  .arena{gap:6px}
+  .prob{padding:9px 12px}
+  .eq{font-size:clamp(28px,8.5vh,44px)}
+  .say{min-height:36px;padding:7px 11px;font-size:14px}
+}
 .k.u{background:var(--surface-2);font-size:21px;color:var(--muted)}
 .k.e{background:var(--gold);color:#1F2430}
 
@@ -645,7 +656,7 @@ function check(){
     beep("no");
     $("#prob").className="prob no wob";
     $("#combo").classList.remove("on");
-    buddy("sad", '<span class="n">'+q.a+" × "+q.b+" = "+want+"</span> 야. 눌러볼래?");
+    buddy("sad", '정답은 <span class="n">'+q.a+" × "+q.b+" = "+want+"</span>. 따라 눌러봐!");
     P.phase="fix"; P.input=""; paintSlot();
     persist();
   }
